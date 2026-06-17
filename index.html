@@ -120,6 +120,8 @@ const client = mqtt.connect(
 }
 );
 
+client.subscribe('riego/estado');
+
 client.on('connect', () => {
 console.log('MQTT conectado');
 });
