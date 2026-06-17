@@ -70,6 +70,19 @@ color:white;
 <div class="container">
 
 <div class="card">
+<h2>Estados en Tiempo Real</h2>
+
+<p>Zona 1: <span id="z1">---</span></p>
+<p>Zona 2: <span id="z2">---</span></p>
+<p>Zona 3: <span id="z3">---</span></p>
+<p>Zona 4: <span id="z4">---</span></p>
+
+<p>Motor: <span id="motor">---</span></p>
+<p>Lluvia: <span id="lluvia">---</span></p>
+
+</div>
+
+<div class="card">
 <h2>Control Manual</h2>
 
 <button class="on" onclick="enviar('riego/cmd/zona1','ON')">
@@ -123,13 +136,43 @@ const client = mqtt.connect(
 client.subscribe('riego/estado');
 
 client.on('connect', () => {
-console.log('MQTT conectado');
+
+  console.log('MQTT conectado');
+
+  client.subscribe('riego/estado');
+
 });
 
 function enviar(topic,mensaje){
 client.publish(topic,mensaje);
 alert('Enviado: '+mensaje);
 }
+
+client.on('message', (topic, message) => {
+
+  if (topic === 'riego/estado') {
+
+    let d = JSON.parse(message.toString());
+
+    document.getElementById('z1').innerText =
+      d.z1 ? '🟢 ON' : '🔴 OFF';
+
+    document.getElementById('z2').innerText =
+      d.z2 ? '🟢 ON' : '🔴 OFF';
+
+    document.getElementById('z3').innerText =
+      d.z3 ? '🟢 ON' : '🔴 OFF';
+
+    document.getElementById('z4').innerText =
+      d.z4 ? '🟢 ON' : '🔴 OFF';
+
+    document.getElementById('motor').innerText =
+      d.motor ? '🟢 ACTIVO' : '🔴 PARADO';
+
+    document.getElementById('lluvia').innerText =
+      d.lluvia ? '🌧 LLUVIA' : '☀ SECO';
+  }
+});
 
 </script>
 
