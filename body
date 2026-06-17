@@ -1,0 +1,12 @@
+<div class="card">
+<h2>Estados en Tiempo Real</h2>
+
+<p>Zona 1: <span id="z1">---</span></p>
+<p>Zona 2: <span id="z2">---</span></p>
+<p>Zona 3: <span id="z3">---</span></p>
+<p>Zona 4: <span id="z4">---</span></p>
+
+<p>Motor: <span id="motor">---</span></p>
+<p>Lluvia: <span id="lluvia">---</span></p>
+
+</div>
