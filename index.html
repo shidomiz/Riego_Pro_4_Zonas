@@ -1,100 +1,126 @@
-const char paginaWeb[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Riego PRO</title>
+<title>Riego Pro 4 Zonas</title>
 
 <style>
 body{
-  margin:0;
-  font-family: Arial;
-  background:#121212;
-  color:#e0e0e0;
-  display:flex;
-  justify-content:center;
+font-family:Segoe UI,sans-serif;
+background:#121212;
+color:#fff;
+margin:0;
+padding:0;
 }
 
-.container{
-  width:100%;
-  max-width:600px;
-  padding:15px;
+header{
+background:#1e4620;
+padding:15px;
+text-align:center;
 }
 
 h1{
-  text-align:center;
-  color:#2ecc71;
-  margin:10px 0;
+margin:0;
+color:#2ecc71;
+}
+
+.container{
+max-width:600px;
+margin:auto;
+padding:15px;
 }
 
 .card{
-  background:#1e1e1e;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-  border:1px solid #2a2a2a;
+background:#1e1e1e;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
 }
 
-.btn{
-  display:block;
-  text-align:center;
-  padding:12px;
-  margin:8px 0;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:bold;
-  background:#2ecc71;
-  color:#000;
+button{
+width:100%;
+padding:12px;
+margin:5px 0;
+border:none;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
 }
 
-.btn.red{
-  background:#e74c3c;
-  color:#fff;
+.on{
+background:#2ecc71;
+color:black;
 }
 
-.status{
-  text-align:center;
-  font-size:14px;
-  color:#aaa;
+.off{
+background:#e74c3c;
+color:white;
 }
 </style>
-
 </head>
 
 <body>
 
+<header>
+<h1>PRO-GUARD RIEGO 4 ZONAS</h1>
+</header>
+
 <div class="container">
 
-<h1>🌱 RIEGO PRO</h1>
-
 <div class="card">
-<p class="status">Control principal del sistema</p>
+<h2>Control Manual</h2>
 
-<a class="btn" href="/toggle?zona=1">Zona 1</a>
-<a class="btn" href="/toggle?zona=2">Zona 2</a>
-<a class="btn red" href="/toggle?motor=1">Motor</a>
+<button class="on" onclick="enviar('riego/cmd/zona1','ON')">
+ENCENDER ZONA 1
+</button>
+
+<button class="off" onclick="enviar('riego/cmd/zona1','OFF')">
+APAGAR ZONA 1
+</button>
+
+<button class="on" onclick="enviar('riego/cmd/zona2','ON')">
+ENCENDER ZONA 2
+</button>
+
+<button class="off" onclick="enviar('riego/cmd/zona2','OFF')">
+APAGAR ZONA 2
+</button>
+
+<button class="on" onclick="enviar('riego/cmd/zona3','ON')">
+ENCENDER ZONA 3
+</button>
+
+<button class="off" onclick="enviar('riego/cmd/zona3','OFF')">
+APAGAR ZONA 3
+</button>
+
+<button class="on" onclick="enviar('riego/cmd/zona4','ON')">
+ENCENDER ZONA 4
+</button>
+
+<button class="off" onclick="enviar('riego/cmd/zona4','OFF')">
+APAGAR ZONA 4
+</button>
 
 </div>
 
-<div class="card">
-<p class="status">Estado actualizado desde ESP32</p>
-<p id="estado">Cargando...</p>
 </div>
 
-</div>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
 <script>
-setInterval(()=>{
-  fetch('/estado')
-    .then(r=>r.json())
-    .then(d=>{
-      document.getElementById('estado').innerHTML =
-        "Z1: " + d.z1 + " | Z2: " + d.z2 + " | Motor: " + d.m;
-    });
-},2000);
-</script>
 
-</body>
-</html>
-)rawliteral";
+const client = mqtt.connect(
+'ws://TU_WEBSOCKET_AQUI:8000/mqtt'
+);
+
+client.on('connect', () => {
+console.log('MQTT conectado');
+});
+
+function enviar(topic,mensaje){
+client.publish(topic,mensaje);
+alert('Enviado: '+mensaje);
+}
