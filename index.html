@@ -227,8 +227,10 @@ client.on('message', (topic, message) => {
 
   // General
   if (d.hora) document.getElementById('hora').innerText = d.hora;
+  
   if (typeof d.auto !== 'undefined') {
-    document.getElementById('auto').innerText = d.auto ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
+    // Valida flexiblemente si es true, 1 o el texto "true"
+    document.getElementById('auto').innerText = (d.auto == 1 || d.auto === true || d.auto === "true") ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
   }
 
   // Nombres de zonas
@@ -249,15 +251,27 @@ client.on('message', (topic, message) => {
     document.getElementById('nombre4p').innerText = d.nombre4;
   }
 
-  // Estados en tiempo real
-  if (typeof d.z1 !== 'undefined') document.getElementById('z1').innerText = d.z1 ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-  if (typeof d.z2 !== 'undefined') document.getElementById('z2').innerText = d.z2 ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-  if (typeof d.z3 !== 'undefined') document.getElementById('z3').innerText = d.z3 ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-  if (typeof d.z4 !== 'undefined') document.getElementById('z4').innerText = d.z4 ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+  // 🚨 CORRECCIÓN CRUCIAL: Estados en tiempo real con validación flexible (Soporta 1, true o "true")
+  if (typeof d.z1 !== 'undefined') {
+    document.getElementById('z1').innerText = (d.z1 == 1 || d.z1 === true || d.z1 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+  }
+  if (typeof d.z2 !== 'undefined') {
+    document.getElementById('z2').innerText = (d.z2 == 1 || d.z2 === true || d.z2 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+  }
+  if (typeof d.z3 !== 'undefined') {
+    document.getElementById('z3').innerText = (d.z3 == 1 || d.z3 === true || d.z3 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+  }
+  if (typeof d.z4 !== 'undefined') {
+    document.getElementById('z4').innerText = (d.z4 == 1 || d.z4 === true || d.z4 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+  }
 
-  // Actuadores y sensores
-  if (typeof d.motor !== 'undefined') document.getElementById('motor').innerText = d.motor ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
-  if (typeof d.lluvia !== 'undefined') document.getElementById('lluvia').innerText = d.lluvia ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
+  // Actuadores y sensores con la misma regla de validación
+  if (typeof d.motor !== 'undefined') {
+    document.getElementById('motor').innerText = (d.motor == 1 || d.motor === true || d.motor === "true") ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
+  }
+  if (typeof d.lluvia !== 'undefined') {
+    document.getElementById('lluvia').innerText = (d.lluvia == 1 || d.lluvia === true || d.lluvia === "true") ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
+  }
 
   // Pintar datos de programación remota si vienen en el JSON (ej. d.prog1 = "08:00 - 15 min")
   if (d.prog1) document.getElementById('prog1').innerText = d.prog1;
