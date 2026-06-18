@@ -199,9 +199,15 @@ client.on('message', (topic, message) => {
 
   if (topic === 'riego/estado') {
 
-    let d = JSON.parse(message.toString());
+    console.log("TOPIC:", topic);
+console.log("MENSAJE:", message.toString());
 
-    console.log(d);
+try{
+  let d = JSON.parse(message.toString());
+  console.log("JSON OK", d);
+}catch(e){
+  console.error("ERROR JSON", e);
+}
 
     document.getElementById('hora').innerText =
 d.hora;
