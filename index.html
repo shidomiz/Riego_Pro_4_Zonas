@@ -121,8 +121,30 @@ const client = mqtt.connect(
 );
 );
 
-client.on('connect', () => {
-console.log('MQTT conectado');
+client.on('message', (topic, message) => {
+
+  if(topic === 'riego/estado') {
+
+    let d = JSON.parse(message.toString());
+
+    document.getElementById("z1").innerText =
+      d.z1 ? "🟢 ON" : "🔴 OFF";
+
+    document.getElementById("z2").innerText =
+      d.z2 ? "🟢 ON" : "🔴 OFF";
+
+    document.getElementById("z3").innerText =
+      d.z3 ? "🟢 ON" : "🔴 OFF";
+
+    document.getElementById("z4").innerText =
+      d.z4 ? "🟢 ON" : "🔴 OFF";
+
+    document.getElementById("motor").innerText =
+      d.motor ? "🟢 ACTIVO" : "🔴 PARADO";
+
+    document.getElementById("lluvia").innerText =
+      d.lluvia ? "🌧 LLUVIA" : "☀ SECO";
+  }
 });
 
 function enviar(topic,mensaje){
