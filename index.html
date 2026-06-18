@@ -117,13 +117,20 @@ Lluvia:
 </div>
  
 <div class="card">
-
 <h2>Programación</h2>
 
-<div id="programacion">
-Cargando...
-</div>
- 
+<h3 id="nombre1p">Zona 1</h3>
+<p id="prog1">---</p>
+
+<h3 id="nombre2p">Zona 2</h3>
+<p id="prog2">---</p>
+
+<h3 id="nombre3p">Zona 3</h3>
+<p id="prog3">---</p>
+
+<h3 id="nombre4p">Zona 4</h3>
+<p id="prog4">---</p>
+
 </div>
 
 <div class="card">
@@ -202,17 +209,31 @@ d.hora;
 document.getElementById('auto').innerText =
 d.auto ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
 
-document.getElementById('nombre1').innerText =
-d.nombre1;
+    document.getElementById('nombre1').innerText = d.nombre1;
+    document.getElementById('nombre2').innerText = d.nombre2;
+    document.getElementById('nombre3').innerText = d.nombre3;
+    document.getElementById('nombre4').innerText = d.nombre4;
 
-document.getElementById('nombre2').innerText =
-d.nombre2;
+    document.getElementById("nombre1p").innerText = d.nombre1;
+    document.getElementById("nombre2p").innerText = d.nombre2;
+    document.getElementById("nombre3p").innerText = d.nombre3;
+    document.getElementById("nombre4p").innerText = d.nombre4;
 
-document.getElementById('nombre3').innerText =
-d.nombre3;
+    document.getElementById("prog1").innerHTML =
+    "Turno 1: " + d.z1h1 + " (" + d.z1d1 + " min)<br>" +
+    "Turno 2: " + d.z1h2 + " (" + d.z1d2 + " min)";
 
-document.getElementById('nombre4').innerText =
-d.nombre4;
+    document.getElementById("prog2").innerHTML =
+    "Turno 1: " + d.z2h1 + " (" + d.z2d1 + " min)<br>" +
+    "Turno 2: " + d.z2h2 + " (" + d.z2d2 + " min)";
+
+    document.getElementById("prog3").innerHTML =
+    "Turno 1: " + d.z3h1 + " (" + d.z3d1 + " min)<br>" +
+    "Turno 2: " + d.z3h2 + " (" + d.z3d2 + " min)";
+
+    document.getElementById("prog4").innerHTML =
+    "Turno 1: " + d.z4h1 + " (" + d.z4d1 + " min)<br>" +
+    "Turno 2: " + d.z4h2 + " (" + d.z4d2 + " min)";   
 
     document.getElementById('z1').innerText =
       d.z1 ? '🟢 ON' : '🔴 OFF';
