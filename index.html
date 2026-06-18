@@ -196,6 +196,8 @@ client.on('message', (topic, message) => {
 
     let d = JSON.parse(message.toString());
 
+    console.log(d);
+
     document.getElementById('hora').innerText =
 d.hora;
 
