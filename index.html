@@ -203,7 +203,16 @@ client.on('message', (topic, message) => {
 console.log("MENSAJE:", message.toString());
 
 try{
+  console.log("RAW MQTT:");
+console.log(message.toString());
+
+try {
   let d = JSON.parse(message.toString());
+  console.log("JSON OK", d);
+} catch(e) {
+  console.error("JSON ERROR");
+  console.log(message.toString());
+}
   console.log("JSON OK", d);
 }catch(e){
   console.error("ERROR JSON", e);
