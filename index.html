@@ -239,14 +239,16 @@
         const client = new Paho.MQTT.Client(broker, puerto, clientId);
 
         const opcionesConexion = {
-            useSSL: true,
-            userName: usuario,
-            password: contrasena,
-            onSuccess: alConectar,
-            onFailure: alFallarConexion,
-            keepAliveInterval: 60,
-            reconnect: true
-        };
+        useSSL: true,
+        userName: usuario,
+        password: contrasena,
+        onSuccess: alConectar,
+        onFailure: alFallarConexion,
+        keepAliveInterval: 60,
+        cleanSession: true,
+        mqttVersion: 4 // Forzar protocolo MQTT 3.1.1 para máxima compatibilidad con navegadores
+        // 🚨 SE ELIMINÓ LA LÍNEA DE "reconnect: true" PARA EVITAR EL ERROR
+};
 
         // Conectar al Broker al cargar la página
         client.connect(opcionesConexion);
