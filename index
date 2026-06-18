@@ -1,0 +1,100 @@
+const char paginaWeb[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riego PRO</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial;
+  background:#121212;
+  color:#e0e0e0;
+  display:flex;
+  justify-content:center;
+}
+
+.container{
+  width:100%;
+  max-width:600px;
+  padding:15px;
+}
+
+h1{
+  text-align:center;
+  color:#2ecc71;
+  margin:10px 0;
+}
+
+.card{
+  background:#1e1e1e;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+  border:1px solid #2a2a2a;
+}
+
+.btn{
+  display:block;
+  text-align:center;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+  background:#2ecc71;
+  color:#000;
+}
+
+.btn.red{
+  background:#e74c3c;
+  color:#fff;
+}
+
+.status{
+  text-align:center;
+  font-size:14px;
+  color:#aaa;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌱 RIEGO PRO</h1>
+
+<div class="card">
+<p class="status">Control principal del sistema</p>
+
+<a class="btn" href="/toggle?zona=1">Zona 1</a>
+<a class="btn" href="/toggle?zona=2">Zona 2</a>
+<a class="btn red" href="/toggle?motor=1">Motor</a>
+
+</div>
+
+<div class="card">
+<p class="status">Estado actualizado desde ESP32</p>
+<p id="estado">Cargando...</p>
+</div>
+
+</div>
+
+<script>
+setInterval(()=>{
+  fetch('/estado')
+    .then(r=>r.json())
+    .then(d=>{
+      document.getElementById('estado').innerHTML =
+        "Z1: " + d.z1 + " | Z2: " + d.z2 + " | Motor: " + d.m;
+    });
+},2000);
+</script>
+
+</body>
+</html>
+)rawliteral";
