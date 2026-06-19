@@ -511,8 +511,23 @@ function enviarProgramacionWeb() {
     const m2 = document.getElementById('p_m2').value || "0";
     const d2 = document.getElementById('p_d2').value || "0";
 
-    // Empaquetamos todo separado por comas
-    const comando = `SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2}`;
+    // Calcular la máscara de bits para los días seleccionados
+    let diasMascara = 0;
+    const checkboxes = document.querySelectorAll('.chk-dia');
+    checkboxes.forEach(chk => {
+        if (chk.checked) {
+            // Si el lunes (valor 1) está marcado, sumamos 2^1 = 2. Martes (valor 2) = 2^2 = 4...
+            diasMascara |= (1 << parseInt(chk.value));
+        }
+    });
+
+    if (diasMascara === 0) {
+        alert("Por favor, selecciona al menos un día de la semana para el riego.");
+        return;
+    }
+
+    // El comando final ahora viaja como: SET_PROG,ZONA,H1,M1,D1,H2,M2,D2,DIAS_MASK
+    const comando = `SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2},${diasMascara}`;
     enviar('riego/comando', comando);
 }
     </script>
