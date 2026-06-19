@@ -229,6 +229,42 @@
             </div>
         </div>
 
+       <div class="card" style="grid-column: 1 / -1;">
+            <h2>📅 Configurar Horarios de Riego desde Web</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                
+                <div class="form-group">
+                    <label style="font-weight: bold; color: var(--success);">1. Seleccionar Zona:</label>
+                    <select id="prog_zona" style="width: 100%; padding: 8px; margin-top: 5px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+                        <option value="1">Zona 1 (Frente)</option>
+                        <option value="2">Zona 2 (Jardín)</option>
+                        <option value="3">Zona 3 (Patio)</option>
+                        <option value="4">Zona 4 (Pileta)</option>
+                    </select>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 1:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h1" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m1" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d1" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+
+                <div style="background: #252525; padding: 10px; border-radius: 6px; border: 1px solid #333;">
+                    <label style="font-weight: bold; color: var(--primary);">⏱️ TURNO 2:</label>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="number" id="p_h2" min="0" max="23" placeholder="Hora" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_m2" min="0" max="59" placeholder="Min" style="width:33%; padding:5px; text-align:center;">
+                        <input type="number" id="p_d2" min="0" max="120" placeholder="Min Riego" style="width:34%; padding:5px; text-align:center; background:#1e3d59; color:white;">
+                    </div>
+                </div>
+
+            </div>
+            <button class="btn-success full-width" onclick="enviarProgramacionWeb()">💾 Guardar Cronograma en ESP32</button>
+        </div>
+        
         <div class="card">
             <h2>🏷️ Nombres de Zonas</h2>
             <div class="form-group" style="margin-bottom: 10px;">
@@ -374,67 +410,94 @@
         }
 
         function alRecibirMensaje(message) {
-            if (message.destinationName !== 'riego/estado') return;
+    if (message.destinationName !== 'riego/estado') return;
 
-            console.log("MQTT Recibido:", message.payloadString);
+    console.log("MQTT Recibido:", message.payloadString);
 
-            let d;
-            try {
-                d = JSON.parse(message.payloadString);
-            } catch(e) {
-                console.error("Error parseando el JSON entrante:", e);
-                return;
-            }
+    let d;
+    try {
+        d = JSON.parse(message.payloadString);
+    } catch(e) {
+        console.error("Error parseando el JSON entrante:", e);
+        return;
+    }
 
-            if (d.hora) document.getElementById('hora').innerText = d.hora;
-            
-            if (typeof d.auto !== 'undefined') {
-                document.getElementById('auto').innerText = (d.auto == 1 || d.auto === true || d.auto === "true") ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
-            }
+    // ⌚ Hora General
+    if (d.hora) document.getElementById('hora').innerText = d.hora;
+    
+    // ⚙️ Modo Automático
+    if (typeof d.auto !== 'undefined') {
+        document.getElementById('auto').innerText = (d.auto == 1 || d.auto === true || d.auto === "true") ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
+    }
 
-            // 🚨 CORRECCIÓN AQUÍ: Ahora lee las claves 'name_z1', 'name_z2'... tal cual las envía el ESP32
-            if (d.name_z1) {
-                document.getElementById('nombre1').innerText = d.name_z1 + ":";
-                document.getElementById('nombre1p').innerText = d.name_z1;
-            }
-            if (d.name_z2) {
-                document.getElementById('nombre2').innerText = d.name_z2 + ":";
-                document.getElementById('nombre2p').innerText = d.name_z2;
-            }
-            if (d.name_z3) {
-                document.getElementById('nombre3').innerText = d.name_z3 + ":";
-                document.getElementById('nombre3p').innerText = d.name_z3;
-            }
-            if (d.name_z4) {
-                document.getElementById('nombre4').innerText = d.name_z4 + ":";
-                document.getElementById('nombre4p').innerText = d.name_z4;
-            }
+    // 🚨 NOMBRES DE ZONAS DINÁMICAS (Actualiza Tarjetas, Tiempos y Lista Desplegable)
+    if (d.name_z1) {
+        document.getElementById('nombre1').innerText = d.name_z1 + ":";
+        document.getElementById('nombre1p').innerText = d.name_z1;
+        let opt1 = document.querySelector("#prog_zona option[value='1']");
+        if(opt1) opt1.innerText = "Zona 1 (" + d.name_z1 + ")";
+    }
+    if (d.name_z2) {
+        document.getElementById('nombre2').innerText = d.name_z2 + ":";
+        document.getElementById('nombre2p').innerText = d.name_z2;
+        let opt2 = document.querySelector("#prog_zona option[value='2']");
+        if(opt2) opt2.innerText = "Zona 2 (" + d.name_z2 + ")";
+    }
+    if (d.name_z3) {
+        document.getElementById('nombre3').innerText = d.name_z3 + ":";
+        document.getElementById('nombre3p').innerText = d.name_z3;
+        let opt3 = document.querySelector("#prog_zona option[value='3']");
+        if(opt3) opt3.innerText = "Zona 3 (" + d.name_z3 + ")";
+    }
+    if (d.name_z4) {
+        document.getElementById('nombre4').innerText = d.name_z4 + ":";
+        document.getElementById('nombre4p').innerText = d.name_z4;
+        let opt4 = document.querySelector("#prog_zona option[value='4']");
+        if(opt4) opt4.innerText = "Zona 4 (" + d.name_z4 + ")";
+    }
 
-            if (typeof d.z1 !== 'undefined') {
-                document.getElementById('z1').innerText = (d.z1 == 1 || d.z1 === true || d.z1 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-            }
-            if (typeof d.z2 !== 'undefined') {
-                document.getElementById('z2').innerText = (d.z2 == 1 || d.z2 === true || d.z2 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-            }
-            if (typeof d.z3 !== 'undefined') {
-                document.getElementById('z3').innerText = (d.z3 == 1 || d.z3 === true || d.z3 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-            }
-            if (typeof d.z4 !== 'undefined') {
-                document.getElementById('z4').innerText = (d.z4 == 1 || d.z4 === true || d.z4 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
-            }
+    // 💧 Estado de las Válvulas
+    if (typeof d.z1 !== 'undefined') {
+        document.getElementById('z1').innerText = (d.z1 == 1 || d.z1 === true || d.z1 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+    }
+    if (typeof d.z2 !== 'undefined') {
+        document.getElementById('z2').innerText = (d.z2 == 1 || d.z2 === true || d.z2 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+    }
+    if (typeof d.z3 !== 'undefined') {
+        document.getElementById('z3').innerText = (d.z3 == 1 || d.z3 === true || d.z3 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+    }
+    if (typeof d.z4 !== 'undefined') {
+        document.getElementById('z4').innerText = (d.z4 == 1 || d.z4 === true || d.z4 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+    }
 
-            if (typeof d.motor !== 'undefined') {
-                document.getElementById('motor').innerText = (d.motor == 1 || d.motor === true || d.motor === "true") ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
-            }
-            if (typeof d.lluvia !== 'undefined') {
-                document.getElementById('lluvia').innerText = (d.lluvia == 1 || d.lluvia === true || d.lluvia === "true") ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
-            }
+    // ⚡ Bomba y Clima
+    if (typeof d.motor !== 'undefined') {
+        document.getElementById('motor').innerText = (d.motor == 1 || d.motor === true || d.motor === "true") ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
+    }
+    if (typeof d.lluvia !== 'undefined') {
+        document.getElementById('lluvia').innerText = (d.lluvia == 1 || d.lluvia === true || d.lluvia === "true") ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
+    }
 
-            if (d.prog1) document.getElementById('prog1').innerText = d.prog1;
-            if (d.prog2) document.getElementById('prog2').innerText = d.prog2;
-            if (d.prog3) document.getElementById('prog3').innerText = d.prog3;
-            if (d.prog4) document.getElementById('prog4').innerText = d.prog4;
-        }
+    // 📅 Strings de las Programaciones
+    if (d.prog1) document.getElementById('prog1').innerText = d.prog1;
+    if (d.prog2) document.getElementById('prog2').innerText = d.prog2;
+    if (d.prog3) document.getElementById('prog3').innerText = d.prog3;
+    if (d.prog4) document.getElementById('prog4').innerText = d.prog4;
+}
+
+function enviarProgramacionWeb() {
+    const zona = document.getElementById('prog_zona').value;
+    const h1 = document.getElementById('p_h1').value || "0";
+    const m1 = document.getElementById('p_m1').value || "0";
+    const d1 = document.getElementById('p_d1').value || "0";
+    const h2 = document.getElementById('p_h2').value || "0";
+    const m2 = document.getElementById('p_m2').value || "0";
+    const d2 = document.getElementById('p_d2').value || "0";
+
+    // Empaquetamos todo separado por comas
+    const comando = `SET_PROG,${zona},${h1},${m1},${d1},${h2},${m2},${d2}`;
+    enviar('riego/comando', comando);
+}
     </script>
 </body>
 </html>
