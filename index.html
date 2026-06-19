@@ -152,64 +152,86 @@
     <div class="container">
 
         <div class="card">
-            <h2>⚙️ Estado General</h2>
-            <div class="data-row">
-                <span class="data-label">Hora del RTC:</span>
-                <span class="data-value" id="hora">--/-- --:--:--</span>
+        <h2>Estado General</h2>
+        <div class="grid">
+            <div class="status-item">
+                <span class="status-label">Reloj Sistema:</span>
+                <span class="status-value" id="hora">--/-- --:--:--</span>
             </div>
-            <div class="data-row">
-                <span class="data-label">Modo Automático:</span>
-                <span class="data-value" id="auto">🔴 DESHABILITADO</span>
+            <div class="status-item">
+                <span class="status-label">Modo Automático:</span>
+                <span class="status-value" id="auto">--</span>
             </div>
-            <div class="data-row">
-                <span class="data-label">Sensor de Lluvia:</span>
-                <span class="data-value" id="lluvia">☀️ SECO</span>
+            <div class="status-item">
+                <span class="status-label">Pluviómetro:</span>
+                <span class="status-value" id="lluvia">--</span>
             </div>
-            <div class="data-row">
-                <span class="data-label">Bomba Hidráulica:</span>
-                <span class="data-value" id="motor">🔴 PARADO</span>
+            <div class="status-item">
+                <span class="status-label">Bomba Hidráulica:</span>
+                <span class="status-value" id="motor">--</span>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <h2>🌱 Válvulas de Riego</h2>
-            <div class="data-row">
-                <span class="data-label" id="nombre1p">Zona 1</span>
-                <span class="data-value" id="z1">🔴 APAGADA</span>
+    <div class="card">
+        <h2>Estado de las Válvulas</h2>
+        <div class="grid">
+            <div class="status-item">
+                <span class="status-label" id="nombre1">Zona 1:</span>
+                <span class="status-value" id="z1">--</span>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="enviar('riego/comando', 'Z1_ON')">ON</button>
+                    <button class="btn btn-danger" onclick="enviar('riego/comando', 'Z1_OFF')">OFF</button>
+                </div>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre2p">Zona 2</span>
-                <span class="data-value" id="z2">🔴 APAGADA</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre2">Zona 2:</span>
+                <span class="status-value" id="z2">--</span>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="enviar('riego/comando', 'Z2_ON')">ON</button>
+                    <button class="btn btn-danger" onclick="enviar('riego/comando', 'Z2_OFF')">OFF</button>
+                </div>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre3p">Zona 3</span>
-                <span class="data-value" id="z3">🔴 APAGADA</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre3">Zona 3:</span>
+                <span class="status-value" id="z3">--</span>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="enviar('riego/comando', 'Z3_ON')">ON</button>
+                    <button class="btn btn-danger" onclick="enviar('riego/comando', 'Z3_OFF')">OFF</button>
+                </div>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre4p">Zona 4</span>
-                <span class="data-value" id="z4">🔴 APAGADA</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre4">Zona 4:</span>
+                <span class="status-value" id="z4">--</span>
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="enviar('riego/comando', 'Z4_ON')">ON</button>
+                    <button class="btn btn-danger" onclick="enviar('riego/comando', 'Z4_OFF')">OFF</button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="card">
-            <h2>📅 Tiempos Programados</h2>
-            <div class="data-row">
-                <span class="data-label" id="nombre1">Zona 1:</span>
-                <span class="data-value" id="prog1">Cargando...</span>
+    <div class="card">
+        <h2>Tiempos Programados</h2>
+        <div class="grid">
+            <div class="status-item">
+                <span class="status-label" id="nombre1p">Zona 1</span>
+                <span class="status-value" id="prog1" style="font-size: 0.9rem; color: var(--text-muted);">Cargando...</span>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre2">Zona 2:</span>
-                <span class="data-value" id="prog2">Cargando...</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre2p">Zona 2</span>
+                <span class="status-value" id="prog2" style="font-size: 0.9rem; color: var(--text-muted);">Cargando...</span>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre3">Zona 3:</span>
-                <span class="data-value" id="prog3">Cargando...</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre3p">Zona 3</span>
+                <span class="status-value" id="prog3" style="font-size: 0.9rem; color: var(--text-muted);">Cargando...</span>
             </div>
-            <div class="data-row">
-                <span class="data-label" id="nombre4">Zona 4:</span>
-                <span class="data-value" id="prog4">Cargando...</span>
+            <div class="status-item">
+                <span class="status-label" id="nombre4p">Zona 4</span>
+                <span class="status-value" id="prog4" style="font-size: 0.9rem; color: var(--text-muted);">Cargando...</span>
             </div>
         </div>
+    </div>
 
         <div class="card">
             <h2>🎮 Comando Remoto Manual</h2>
