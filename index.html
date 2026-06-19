@@ -222,7 +222,40 @@
             </div>
         </div>
 
+        <div class="card">
+    <h2>🏷️ Nombres de Zonas</h2>
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label>Zona 1:</label>
+        <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px;">
     </div>
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label>Zona 2:</label>
+        <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label>Zona 3:</label>
+        <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 15px;">
+        <label>Zona 4:</label>
+        <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px;">
+    </div>
+    <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
+</div>
+
+<div class="card">
+    <h2>🌐 Configuración de Red</h2>
+    <div class="form-group" style="margin-bottom: 10px;">
+        <label>Nombre de Red (SSID):</label>
+        <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px;">
+    </div>
+    <div class="form-group" style="margin-bottom: 15px;">
+        <label>Contraseña WiFi:</label>
+        <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px;">
+    </div>
+    <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
+    </div>
+</div>
 
     <script type="text/javascript">
         // Extracción de datos del Broker desde tu propio firmware del ESP32
