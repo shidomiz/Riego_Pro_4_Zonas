@@ -98,7 +98,6 @@
             font-weight: bold;
         }
 
-        /* Botonera de control manual remoto */
         .btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -127,6 +126,14 @@
 
         button.btn-danger:hover {
             background-color: #c0392b;
+        }
+
+        button.btn-success {
+            background-color: var(--success);
+        }
+
+        button.btn-success:hover {
+            background-color: #27ae60;
         }
 
         .full-width {
@@ -223,67 +230,63 @@
         </div>
 
         <div class="card">
-    <h2>🏷️ Nombres de Zonas</h2>
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label>Zona 1:</label>
-        <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px;">
-    </div>
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label>Zona 2:</label>
-        <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px;">
-    </div>
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label>Zona 3:</label>
-        <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px;">
-    </div>
-    <div class="form-group" style="margin-bottom: 15px;">
-        <label>Zona 4:</label>
-        <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px;">
-    </div>
-    <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
-</div>
+            <h2>🏷️ Nombres de Zonas</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 1:</label>
+                <input type="text" id="input_nz1" placeholder="Ej: Jardín Delantero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 2:</label>
+                <input type="text" id="input_nz2" placeholder="Ej: Huerta" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Zona 3:</label>
+                <input type="text" id="input_nz3" placeholder="Ej: Patio Trasero" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Zona 4:</label>
+                <input type="text" id="input_nz4" placeholder="Ej: Canteros" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-success full-width" onclick="guardarNombresZonas()">💾 Guardar Nombres</button>
+        </div>
 
-<div class="card">
-    <h2>🌐 Configuración de Red</h2>
-    <div class="form-group" style="margin-bottom: 10px;">
-        <label>Nombre de Red (SSID):</label>
-        <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px;">
+        <div class="card">
+            <h2>🌐 Configuración de Red</h2>
+            <div class="form-group" style="margin-bottom: 10px;">
+                <label>Nombre de Red (SSID):</label>
+                <input type="text" id="input_ssid" placeholder="Tu red WiFi" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Contraseña WiFi:</label>
+                <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px; background: #2b2b2b; color: white; border: 1px solid #444; border-radius: 4px;">
+            </div>
+            <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
+        </div>
+
     </div>
-    <div class="form-group" style="margin-bottom: 15px;">
-        <label>Contraseña WiFi:</label>
-        <input type="password" id="input_wfifipass" placeholder="••••••••" style="width: 100%; padding: 8px; margin-top: 4px;">
-    </div>
-    <button class="btn-danger full-width" onclick="guardarRedWiFi()">📡 Guardar y Reiniciar ESP32</button>
-    </div>
-</div>
 
     <script type="text/javascript">
-        // Extracción de datos del Broker desde tu propio firmware del ESP32
         const broker = "e0ece1d60e044c559704fc73233355d9.s1.eu.hivemq.cloud"; 
-        const puerto = 8884; // Puerto SSL/TLS sobre WebSockets (estándar para navegadores seguros)
+        const puerto = 8884; 
         const usuario = "hivemq.webclient.1781702540240";
         const contrasena = ".&,Q>1V0cXv2rqUd3fWR";
         
-        // Generación de un Client ID aleatorio para evitar colisiones
         const clientId = "web_client_" + Math.random().toString(16).substr(2, 8);
         const statusBar = document.getElementById('statusBar');
 
-        // Inicializamos el objeto cliente de Paho MQTT
         const client = new Paho.MQTT.Client(broker, puerto, clientId);
 
         const opcionesConexion = {
-        useSSL: true,
-        userName: usuario,
-        password: contrasena,
-        onSuccess: alConectar,
-        onFailure: alFallarConexion,
-        keepAliveInterval: 60,
-        cleanSession: true,
-        mqttVersion: 4 // Forzar protocolo MQTT 3.1.1 para máxima compatibilidad con navegadores
-        // 🚨 SE ELIMINÓ LA LÍNEA DE "reconnect: true" PARA EVITAR EL ERROR
-};
+            useSSL: true,
+            userName: usuario,
+            password: contrasena,
+            onSuccess: alConectar,
+            onFailure: alFallarConexion,
+            keepAliveInterval: 60,
+            cleanSession: true,
+            mqttVersion: 4
+        };
 
-        // Conectar al Broker al cargar la página
         client.connect(opcionesConexion);
         client.onMessageArrived = alRecibirMensaje;
         client.onConnectionLost = alPerderConexion;
@@ -293,8 +296,6 @@
             statusBar.innerText = "🟢 CONECTADO ONLINE";
             statusBar.style.background = "#2ecc71";
             statusBar.style.color = "black";
-            
-            // Suscribirse al tópico de telemetría del controlador de riego
             client.subscribe('riego/estado');
         }
 
@@ -314,7 +315,6 @@
             }
         }
 
-        // Función para publicar tópicos de control manual hacia el ESP32
         function enviar(topic, mensaje) {
             if (!client.isConnected()) {
                 alert("No estás conectado al broker MQTT.");
@@ -326,7 +326,6 @@
             client.send(message);
             console.log(`Comando enviado a [${topic}]: ${mensaje}`);
             
-            // Feedback dinámico en la barra superior en vez de un molesto alert emergente
             const originalText = statusBar.innerText;
             const originalBg = statusBar.style.background;
             const originalColor = statusBar.style.color;
@@ -342,7 +341,38 @@
             }, 2000);
         }
 
-        // Procesamiento flexible del JSON entrante del ESP32
+        // 💾 FUNCIÓN: RECOPILAR NOMBRES Y ENVIAR POR MQTT
+        function guardarNombresZonas() {
+            const nz1 = document.getElementById('input_nz1').value.trim();
+            const nz2 = document.getElementById('input_nz2').value.trim();
+            const nz3 = document.getElementById('input_nz3').value.trim();
+            const nz4 = document.getElementById('input_nz4').value.trim();
+
+            if(!nz1 || !nz2 || !nz3 || !nz4) {
+                alert("Por favor, completa los nombres de todas las zonas.");
+                return;
+            }
+
+            const comando = `SET_NAMES,${nz1},${nz2},${nz3},${nz4}`;
+            enviar('riego/comando', comando);
+        }
+
+        // 📡 FUNCIÓN: RECOPILAR CREDENCIALES WIFI Y ENVIAR POR MQTT
+        function guardarRedWiFi() {
+            const ssid = document.getElementById('input_ssid').value.trim();
+            const pass = document.getElementById('input_wfifipass').value.trim();
+
+            if(!ssid || !pass) {
+                alert("Por favor, ingresa el SSID y la contraseña de la red.");
+                return;
+            }
+
+            if(confirm("¿Estás seguro? El ESP32 se desconectará e intentará unirse a la nueva red.")) {
+                const comando = `SET_WIFI,${ssid},${pass}`;
+                enviar('riego/comando', comando);
+            }
+        }
+
         function alRecibirMensaje(message) {
             if (message.destinationName !== 'riego/estado') return;
 
@@ -356,32 +386,30 @@
                 return;
             }
 
-            // Actualización de Telemetría General e interfaces de texto
             if (d.hora) document.getElementById('hora').innerText = d.hora;
             
             if (typeof d.auto !== 'undefined') {
                 document.getElementById('auto').innerText = (d.auto == 1 || d.auto === true || d.auto === "true") ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
             }
 
-            // Nombres de zonas dinámicos mapeados del ESP32
-            if (d.nombre1) {
-                document.getElementById('nombre1').innerText = d.nombre1 + ":";
-                document.getElementById('nombre1p').innerText = d.nombre1;
+            // 🚨 CORRECCIÓN AQUÍ: Ahora lee las claves 'name_z1', 'name_z2'... tal cual las envía el ESP32
+            if (d.name_z1) {
+                document.getElementById('nombre1').innerText = d.name_z1 + ":";
+                document.getElementById('nombre1p').innerText = d.name_z1;
             }
-            if (d.nombre2) {
-                document.getElementById('nombre2').innerText = d.nombre2 + ":";
-                document.getElementById('nombre2p').innerText = d.nombre2;
+            if (d.name_z2) {
+                document.getElementById('nombre2').innerText = d.name_z2 + ":";
+                document.getElementById('nombre2p').innerText = d.name_z2;
             }
-            if (d.nombre3) {
-                document.getElementById('nombre3').innerText = d.nombre3 + ":";
-                document.getElementById('nombre3p').innerText = d.nombre3;
+            if (d.name_z3) {
+                document.getElementById('nombre3').innerText = d.name_z3 + ":";
+                document.getElementById('nombre3p').innerText = d.name_z3;
             }
-            if (d.nombre4) {
-                document.getElementById('nombre4').innerText = d.nombre4 + ":";
-                document.getElementById('nombre4p').innerText = d.nombre4;
+            if (d.name_z4) {
+                document.getElementById('nombre4').innerText = d.name_z4 + ":";
+                document.getElementById('nombre4p').innerText = d.name_z4;
             }
 
-            // Validación robusta y flexible para estados de Zonas (Soporta 1/0, True/False o Strings)
             if (typeof d.z1 !== 'undefined') {
                 document.getElementById('z1').innerText = (d.z1 == 1 || d.z1 === true || d.z1 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
             }
@@ -395,7 +423,6 @@
                 document.getElementById('z4').innerText = (d.z4 == 1 || d.z4 === true || d.z4 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
             }
 
-            // Actuadores secundarios y sensores climatológicos
             if (typeof d.motor !== 'undefined') {
                 document.getElementById('motor').innerText = (d.motor == 1 || d.motor === true || d.motor === "true") ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
             }
@@ -403,7 +430,6 @@
                 document.getElementById('lluvia').innerText = (d.lluvia == 1 || d.lluvia === true || d.lluvia === "true") ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
             }
 
-            // Renderizado de las programaciones internas (si vienen preformateadas del Broker)
             if (d.prog1) document.getElementById('prog1').innerText = d.prog1;
             if (d.prog2) document.getElementById('prog2').innerText = d.prog2;
             if (d.prog3) document.getElementById('prog3').innerText = d.prog3;
