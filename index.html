@@ -418,6 +418,13 @@
         }
 
         function alRecibirMensaje(message) {
+             console.log("JSON recibido:", d);
+
+            console.log("hora =", document.getElementById('hora'));
+            console.log("auto =", document.getElementById('auto'));
+            console.log("z1 =", document.getElementById('z1'));
+            console.log("prog1 =", document.getElementById('prog1'));
+            
             if (message.destinationName !== 'riego/estado') return;
 
             console.log("MQTT Recibido:", message.payloadString);
