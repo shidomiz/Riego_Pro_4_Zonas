@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Riego Inteligente 4 Zonas</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --primary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f1c40f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        header {
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--success);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        /* Barra de estado superior */
+        #statusBar {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            background-color: var(--warning);
+            color: black;
+            transition: all 0.4s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 1px solid #2a2a2a;
+        }
+
+        .card h2 {
+            font-size: 1.2rem;
+            border-bottom: 2px solid #2a2a2a;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .data-label {
+            color: var(--text-muted);
+        }
+
+        .data-value {
+            font-weight: bold;
+        }
+
+        /* Botonera de control manual remoto */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: var(--primary);
+            color: white;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button.btn-danger {
+            background-color: var(--danger);
+        }
+
+        button.btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        span.status-indicator {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SISTEMA DE RIEGO INTELIGENTE</h1>
+        <p style="color: var(--text-muted)">Monitoreo MQTT y Telemetría en Tiempo Real</p>
+    </header>
+
+    <div id="statusBar">⏳ CONECTANDO AL BROKER MQTT...</div>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>⚙️ Estado General</h2>
+            <div class="data-row">
+                <span class="data-label">Hora del RTC:</span>
+                <span class="data-value" id="hora">--/-- --:--:--</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Modo Automático:</span>
+                <span class="data-value" id="auto">🔴 DESHABILITADO</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Sensor de Lluvia:</span>
+                <span class="data-value" id="lluvia">☀️ SECO</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">Bomba Hidráulica:</span>
+                <span class="data-value" id="motor">🔴 PARADO</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌱 Válvulas de Riego</h2>
+            <div class="data-row">
+                <span class="data-label" id="nombre1p">Zona 1</span>
+                <span class="data-value" id="z1">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre2p">Zona 2</span>
+                <span class="data-value" id="z2">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre3p">Zona 3</span>
+                <span class="data-value" id="z3">🔴 APAGADA</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre4p">Zona 4</span>
+                <span class="data-value" id="z4">🔴 APAGADA</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📅 Tiempos Programados (EEPROM/Flash)</h2>
+            <div class="data-row">
+                <span class="data-label" id="nombre1">Zona 1:</span>
+                <span class="data-value" id="prog1">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre2">Zona 2:</span>
+                <span class="data-value" id="prog2">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre3">Zona 3:</span>
+                <span class="data-value" id="prog3">Cargando...</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label" id="nombre4">Zona 4:</span>
+                <span class="data-value" id="prog4">Cargando...</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎮 Comando Remoto Manual</h2>
+            <div class="btn-grid">
+                <button onclick="enviar('riego/comando', 'Z1_TOGGLE')">Alternar Z1</button>
+                <button onclick="enviar('riego/comando', 'Z2_TOGGLE')">Alternar Z2</button>
+                <button onclick="enviar('riego/comando', 'Z3_TOGGLE')">Alternar Z3</button>
+                <button onclick="enviar('riego/comando', 'Z4_TOGGLE')">Alternar Z4</button>
+                <button class="btn-danger full-width" onclick="enviar('riego/comando', 'STOP_ALL')">🛑 APAGAR TODO</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        // Extracción de datos del Broker desde tu propio firmware del ESP32
+        const broker = "e0ece1d60e044c559704fc73233355d9.s1.eu.hivemq.cloud"; 
+        const puerto = 8884; // Puerto SSL/TLS sobre WebSockets (estándar para navegadores seguros)
+        const usuario = "hivemq.webclient.1781702540240";
+        const contrasena = ".&,Q>1V0cXv2rqUd3fWR";
+        
+        // Generación de un Client ID aleatorio para evitar colisiones
+        const clientId = "web_client_" + Math.random().toString(16).substr(2, 8);
+        const statusBar = document.getElementById('statusBar');
+
+        // Inicializamos el objeto cliente de Paho MQTT
+        const client = new Paho.MQTT.Client(broker, puerto, clientId);
+
+        const opcionesConexion = {
+        useSSL: true,
+        userName: usuario,
+        password: contrasena,
+        onSuccess: alConectar,
+        onFailure: alFallarConexion,
+        keepAliveInterval: 60,
+        cleanSession: true,
+        mqttVersion: 4 // Forzar protocolo MQTT 3.1.1 para máxima compatibilidad con navegadores
+        // 🚨 SE ELIMINÓ LA LÍNEA DE "reconnect: true" PARA EVITAR EL ERROR
+};
+
+        // Conectar al Broker al cargar la página
+        client.connect(opcionesConexion);
+        client.onMessageArrived = alRecibirMensaje;
+        client.onConnectionLost = alPerderConexion;
+
+        function alConectar() {
+            console.log('MQTT conectado exitosamente.');
+            statusBar.innerText = "🟢 CONECTADO ONLINE";
+            statusBar.style.background = "#2ecc71";
+            statusBar.style.color = "black";
+            
+            // Suscribirse al tópico de telemetría del controlador de riego
+            client.subscribe('riego/estado');
+        }
+
+        function alFallarConexion(error) {
+            console.error("Fallo de conexión MQTT:", error);
+            statusBar.innerText = "🔴 ERROR DE CONEXIÓN: " + error.errorMessage;
+            statusBar.style.background = "#e74c3c";
+            statusBar.style.color = "white";
+        }
+
+        function alPerderConexion(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Conexión perdida:" + responseObject.errorMessage);
+                statusBar.innerText = "🔴 DESCONECTADO (Reconectando...)";
+                statusBar.style.background = "#e74c3c";
+                statusBar.style.color = "white";
+            }
+        }
+
+        // Función para publicar tópicos de control manual hacia el ESP32
+        function enviar(topic, mensaje) {
+            if (!client.isConnected()) {
+                alert("No estás conectado al broker MQTT.");
+                return;
+            }
+            const message = new Paho.MQTT.Message(mensaje);
+            message.destinationName = topic;
+            message.qos = 1;
+            client.send(message);
+            console.log(`Comando enviado a [${topic}]: ${mensaje}`);
+            
+            // Feedback dinámico en la barra superior en vez de un molesto alert emergente
+            const originalText = statusBar.innerText;
+            const originalBg = statusBar.style.background;
+            const originalColor = statusBar.style.color;
+            
+            statusBar.innerText = `⚡ ENVIADO: ${mensaje} A ${topic.toUpperCase()}`;
+            statusBar.style.background = "#3498db";
+            statusBar.style.color = "white";
+            
+            setTimeout(() => {
+                statusBar.innerText = originalText;
+                statusBar.style.background = originalBg;
+                statusBar.style.color = originalColor;
+            }, 2000);
+        }
+
+        // Procesamiento flexible del JSON entrante del ESP32
+        function alRecibirMensaje(message) {
+            if (message.destinationName !== 'riego/estado') return;
+
+            console.log("MQTT Recibido:", message.payloadString);
+
+            let d;
+            try {
+                d = JSON.parse(message.payloadString);
+            } catch(e) {
+                console.error("Error parseando el JSON entrante:", e);
+                return;
+            }
+
+            // Actualización de Telemetría General e interfaces de texto
+            if (d.hora) document.getElementById('hora').innerText = d.hora;
+            
+            if (typeof d.auto !== 'undefined') {
+                document.getElementById('auto').innerText = (d.auto == 1 || d.auto === true || d.auto === "true") ? '🟢 HABILITADO' : '🔴 DESHABILITADO';
+            }
+
+            // Nombres de zonas dinámicos mapeados del ESP32
+            if (d.nombre1) {
+                document.getElementById('nombre1').innerText = d.nombre1 + ":";
+                document.getElementById('nombre1p').innerText = d.nombre1;
+            }
+            if (d.nombre2) {
+                document.getElementById('nombre2').innerText = d.nombre2 + ":";
+                document.getElementById('nombre2p').innerText = d.nombre2;
+            }
+            if (d.nombre3) {
+                document.getElementById('nombre3').innerText = d.nombre3 + ":";
+                document.getElementById('nombre3p').innerText = d.nombre3;
+            }
+            if (d.nombre4) {
+                document.getElementById('nombre4').innerText = d.nombre4 + ":";
+                document.getElementById('nombre4p').innerText = d.nombre4;
+            }
+
+            // Validación robusta y flexible para estados de Zonas (Soporta 1/0, True/False o Strings)
+            if (typeof d.z1 !== 'undefined') {
+                document.getElementById('z1').innerText = (d.z1 == 1 || d.z1 === true || d.z1 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+            }
+            if (typeof d.z2 !== 'undefined') {
+                document.getElementById('z2').innerText = (d.z2 == 1 || d.z2 === true || d.z2 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+            }
+            if (typeof d.z3 !== 'undefined') {
+                document.getElementById('z3').innerText = (d.z3 == 1 || d.z3 === true || d.z3 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+            }
+            if (typeof d.z4 !== 'undefined') {
+                document.getElementById('z4').innerText = (d.z4 == 1 || d.z4 === true || d.z4 === "true") ? '🟢 ENCENDIDA' : '🔴 APAGADA';
+            }
+
+            // Actuadores secundarios y sensores climatológicos
+            if (typeof d.motor !== 'undefined') {
+                document.getElementById('motor').innerText = (d.motor == 1 || d.motor === true || d.motor === "true") ? '🟢 ACTIVO (BOMBA ON)' : '🔴 PARADO';
+            }
+            if (typeof d.lluvia !== 'undefined') {
+                document.getElementById('lluvia').innerText = (d.lluvia == 1 || d.lluvia === true || d.lluvia === "true") ? '🌧️ SENSOR ACTIVADO (LLUVIA)' : '☀️ SECO';
+            }
+
+            // Renderizado de las programaciones internas (si vienen preformateadas del Broker)
+            if (d.prog1) document.getElementById('prog1').innerText = d.prog1;
+            if (d.prog2) document.getElementById('prog2').innerText = d.prog2;
+            if (d.prog3) document.getElementById('prog3').innerText = d.prog3;
+            if (d.prog4) document.getElementById('prog4').innerText = d.prog4;
+        }
+    </script>
+</body>
+</html>
