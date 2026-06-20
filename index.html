@@ -426,11 +426,7 @@
             console.log("TOPICO:", message.destinationName);
             console.log("PAYLOAD:", message.payloadString);
 
-             if (d.hora) {
-            document.getElementById('hora').innerText = d.hora;
-            console.log("Hora actualizada:", d.hora);
-
-            if (message.destinationName !== 'riego/estado') return;
+           if (message.destinationName !== 'riego/estado') return;
 
            console.log("MQTT Recibido:", message.payloadString);
             let d;
@@ -439,6 +435,10 @@
             } catch(e) {
                 console.error("Error parseando el JSON entrante:", e);
                 return;
+            }
+             if (d.hora) {
+        document.getElementById('hora').innerText = d.hora;
+        console.log("Hora actualizada:", d.hora);
             }
         }
 
