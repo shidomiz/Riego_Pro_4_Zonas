@@ -430,6 +430,9 @@
 
     try {
         d = JSON.parse(message.payloadString);
+
+        document.body.style.background = "red";
+        
     } catch(e) {
         console.error("Error parseando JSON:", e);
         return;
