@@ -259,10 +259,10 @@
 
     <script type="text/javascript">
         // Extracción de datos del Broker desde tu propio firmware del ESP32
-        const broker = "e0ece1d60e044c559704fc73233355d9.s1.eu.hivemq.cloud"; 
+        const broker = "636db169bfd3417be1d3c0409e44f3e.s1.eu.hivemq.cloud"; 
         const puerto = 8884; // Puerto SSL/TLS sobre WebSockets (estándar para navegadores seguros)
-        const usuario = "hivemq.webclient.1781702540240";
-        const contrasena = ".&,Q>1V0cXv2rqUd3fWR";
+        const usuario = "Riego_Pro_V4";
+        const contrasena = "Nico159+++";
         
         // Generación de un Client ID aleatorio para evitar colisiones
         const clientId = "web_client_" + Math.random().toString(16).substr(2, 8);
@@ -295,7 +295,7 @@
             statusBar.style.color = "black";
             
             // Suscribirse al tópico de telemetría del controlador de riego
-            client.subscribe('riego/estado');
+            client.subscribe('riego_pro/estado');
         }
 
         function alFallarConexion(error) {
@@ -344,7 +344,7 @@
 
         // Procesamiento flexible del JSON entrante del ESP32
         function alRecibirMensaje(message) {
-            if (message.destinationName !== 'riego/estado') return;
+            if (message.destinationName !== 'riego_pro/estado') return;
 
             console.log("MQTT Recibido:", message.payloadString);
 
