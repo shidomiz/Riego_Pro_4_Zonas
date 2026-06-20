@@ -338,12 +338,16 @@
         client.onConnectionLost = alPerderConexion;
 
         function alConectar() {
-            console.log('MQTT conectado exitosamente.');
-            statusBar.innerText = "🟢 CONECTADO ONLINE";
-            statusBar.style.background = "#2ecc71";
-            statusBar.style.color = "black";
-            client.subscribe('riego/estado');
-        }
+    console.log('MQTT conectado exitosamente.');
+
+    statusBar.innerText = "🟢 CONECTADO ONLINE";
+    statusBar.style.background = "#2ecc71";
+    statusBar.style.color = "black";
+
+    client.subscribe('riego/estado');
+
+    console.log("Suscripto a riego/estado");
+}
 
         function alFallarConexion(error) {
             console.error("Fallo de conexión MQTT:", error);
