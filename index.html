@@ -435,9 +435,13 @@
             } catch(e) {
                 console.error("Error parseando el JSON entrante:", e);
                 return;
-            }
-     
+              if (d.hora) {
+    document.getElementById('hora').innerText = d.hora;
+    console.log("Hora actualizada:", d.hora);
+}
 
+
+                    
             // Los logs de depuración se movieron aquí abajo, donde 'd' ya existe de manera segura
             console.log("JSON recibido con éxito:", d);
             console.log("hora =", document.getElementById('hora'));
