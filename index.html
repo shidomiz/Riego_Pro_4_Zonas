@@ -341,12 +341,10 @@
     console.log('MQTT conectado exitosamente.');
 
     statusBar.innerText = "🟢 CONECTADO ONLINE";
-    statusBar.style.background = "#2ecc71";
-    statusBar.style.color = "black";
 
     client.subscribe('riego_pro/estado');
 
-    console.log("Suscripto a riego/estado");
+    console.log("Suscripto a riego_pro/estado");
 }
 
         function alFallarConexion(error) {
