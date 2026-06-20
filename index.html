@@ -422,16 +422,14 @@
         }
 
         function alRecibirMensaje(message) {
-            if (message.destinationName !== 'riego/estado') return;
 
-            console.log("MQTT Recibido:", message.payloadString);
-            let d;
-            try {
-                d = JSON.parse(message.payloadString);
-            } catch(e) {
-                console.error("Error parseando el JSON entrante:", e);
-                return;
-            }
+    console.log("TOPICO:", message.destinationName);
+    console.log("PAYLOAD:", message.payloadString);
+
+    if (message.destinationName !== 'riego/estado') return;
+
+    ...
+}
 
             // Los logs de depuración se movieron aquí abajo, donde 'd' ya existe de manera segura
             console.log("JSON recibido con éxito:", d);
