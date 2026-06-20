@@ -423,24 +423,26 @@
 
 
          function alRecibirMensaje(message) {
-            console.log("TOPICO:", message.destinationName);
-            console.log("PAYLOAD:", message.payloadString);
+    console.log("TOPICO:", message.destinationName);
+    console.log("PAYLOAD:", message.payloadString);
 
-           if (message.destinationName !== 'riego/estado') return;
+    if (message.destinationName !== 'riego/estado') return;
 
-           console.log("MQTT Recibido:", message.payloadString);
-            let d;
-            try {
-                d = JSON.parse(message.payloadString);
-            } catch(e) {
-                console.error("Error parseando el JSON entrante:", e);
-                return;
-            }
-             if (d.hora) {
+    let d;
+
+    try {
+        d = JSON.parse(message.payloadString);
+    } catch(e) {
+        console.error("Error parseando JSON:", e);
+        return;
+    }
+
+    console.log("JSON:", d);
+
+    if (d.hora) {
         document.getElementById('hora').innerText = d.hora;
         console.log("Hora actualizada:", d.hora);
-            }
-        }
+    }
 
                     
             // Los logs de depuración se movieron aquí abajo, donde 'd' ya existe de manera segura
